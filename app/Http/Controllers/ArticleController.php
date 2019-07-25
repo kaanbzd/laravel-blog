@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Article;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ArticleController extends Controller
 {
@@ -14,7 +17,7 @@ class ArticleController extends Controller
      */
     public function index()
     {
-        $articles = article::all();
+        $articles = DB::table('articles')->orderBy('created_at','desc')->paginate(1);
         return view("article.index", ['articles' => $articles]);
     }
 
@@ -39,6 +42,7 @@ class ArticleController extends Controller
         $article = new Article;
         $article->title = $request->title;
         $article->content = $request->detail;
+        $article->user_id = auth ()-> id();
         $article->save();
         return redirect('/');
     }
@@ -59,12 +63,16 @@ class ArticleController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Article  $article
      * @return \Illuminate\Http\Response
      */
-    public function edit($id, Article $article)
+    public function edit($id)
     {
         $article = Article::find($id);
+
+        if (Gate::forUser(Auth::user())->denies('edit-post', $article)){
+            abort(403, 'Unauthorized action.');
+        }
+
         return view("edit",['article'=>$article]);
     }
 
@@ -75,7 +83,7 @@ class ArticleController extends Controller
      * @param  \App\Article  $article
      * @return \Illuminate\Http\Response
      */
-    public function update($id,Request $request, Article $article)
+    public function update($id,Request $request)
     {
         $article = Article::find($id);
         $article->title = $request->title;
