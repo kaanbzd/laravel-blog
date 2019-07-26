@@ -8,6 +8,10 @@
     <label for="content">İçerik</label>
     <textarea id ="content" name="detail" cols="90" row="90"></textarea>
     <br>
+    Etiket: <input type="text" name="tag" id="tag">
+    <br>
     <button type="submit">Oluştur</button>
+    
 </form>
+
 @endsection
