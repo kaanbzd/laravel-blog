@@ -17,8 +17,8 @@
 <hr>
     <br>
     @foreach ($article->tag as $tag)
-   Etiketler: {{$tag->name}}
-@endforeach
+      Etiketler: {{$tag->name}}
+    @endforeach
  @if  (Auth::check())
     <form action="{{ url('/detail/'.$article->id.'/comment') }}" method="post">
         @csrf <!-- {{ csrf_field() }} -->

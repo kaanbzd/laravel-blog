@@ -16,10 +16,19 @@ class ArticleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $articles = DB::table('articles')->orderBy('created_at', 'desc')->paginate(1);
-        return view("article.index", ['articles' => $articles]);
+        $tagId = $request->tag;
+        if($tagId != null){
+            $tag = Tag::find($tagId);
+            $articles = $tag->article()->paginate(1);
+        } else {
+            $articles = DB::table('articles')->orderBy('created_at', 'desc')->paginate(1);
+        }
+        
+        $tags = DB::table('tags')->orderBy('name','asc')->get();
+        return view("article.index", ['articles' => $articles,'tags'=>$tags]);
+       
     }
 
     /**
